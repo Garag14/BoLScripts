@@ -321,7 +321,7 @@ function AutoplankMenu()
 			AutoplankMenu.misc:addParam("HPHealth", "Min % for Health Pots", SCRIPT_PARAM_SLICE, 50, 0, 100, -1)
 			AutoplankMenu.misc:addParam("aMP", "Auto Health Pots", SCRIPT_PARAM_ONOFF, false)
 			AutoplankMenu.misc:addParam("MPMana", "Min % for Mana Pots", SCRIPT_PARAM_SLICE, 50, 0, 100, -1)
-			AutoplankMenu.misc:addParam("uTM", "Use Tick Manager/FPS Improver",SCRIPT_PARAM_ONOFF, false)
+			-- AutoplankMenu.misc:addParam("uTM", "Use Tick Manager/FPS Improver",SCRIPT_PARAM_ONOFF, false) --
 			AutoplankMenu.misc:addParam("AutoLevelSkills", "Auto Level Skills (Requires Reload)", SCRIPT_PARAM_LIST, 1, { "No", "Prioritise Q", "Prioritise W" })
 		AutoplankMenu.misc:permaShow("AutoW")
 		---< Misc Menu
@@ -810,7 +810,7 @@ end
 	--- On Process Spell ---
 -- / OrbWalking Functions / --
 
-/ FPS Manager Functions / --
+-- / FPS Manager Functions / --
 class 'TickManager'
 	--- TM Init Function ---
 	function TickManager:__init(ticksPerSecond)
