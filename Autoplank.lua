@@ -4,8 +4,8 @@ local version = "0.1"
 if myHero.charName ~= "Gangplank" then return end
 -- / Hero Name Check / --
 
--- / Auto-Update Function / --
-local Autoplank_Autoupdate = true
+--[[-- / Auto-Update Function / --
+local Autoplank_Autoupdate = false
 local UPDATE_SCRIPT_NAME = "Autoplank - Q = Money"
 local UPDATE_HOST = "raw.github.com"
 local UPDATE_PATH = "/UglyOldGuy/BoL/master/Autoplank.lua".."?rand="..math.random(1,10000)
@@ -33,7 +33,7 @@ if Autoplank_Autoupdate then
 		AutoupdaterMsg("Error downloading version info")
 	end
 end
--- / Auto-Update Function / --
+-- / Auto-Update Function / --]]--
 
 -- / Loading Function / --
 function OnLoad()
@@ -99,14 +99,15 @@ end
 -- / Variables Function / --
 function Variables()
 	--- Skills Vars --
-	SkillQ =	{range = 625, name = "Parrrley",	ready = false,	delay = 400,	timeToHit = 0,	color = ARGB(255,178, 0 , 0 )	}
+	SkillQ =	{range = 625, name = "Parrrley",	ready = false,	color = ARGB(255,178, 0 , 0 )	}
 	SkillW =	{range = 0, name = "Remove Scurvy",	ready = false,	color = ARGB(255, 32,178,170)	}
 	SkillE =	{range = 600, name = "Raise Morale",	ready = false,	color = ARGB(255,128, 0 ,128)	}
-	SkillR =	{range = math.huge, name = "Cannon Barrage",	ready = false,	castingUlt = false,	}
+	SkillR =	{range = 10000, name = "Cannon Barrage",	ready = false,	castingUlt = false,	}
 	--- Skills Vars ---
 	--- Items Vars ---
 	Items = {
 		HealthPot	= {ready = false},
+		ManaPot	= {ready = false},
 		FlaskPot	= {ready = false},
 		TrinketWard	= {ready = false},
 		RubySightStone	= {ready = false},
@@ -261,51 +262,41 @@ end
 -- / Menu Function / --
 function AutoplankMenu()
 	--- Main Menu ---
-	AutoplankMenu = scriptConfig("Katarina - The Sinister Blade", "Katarina")
+	AutoplankMenu = scriptConfig("Gangplank - The Money-Farmer", "Autoplank")
 		---> Combo Menu
 		AutoplankMenu:addSubMenu("["..myHero.charName.." - Combo Settings]", "combo")
 			AutoplankMenu.combo:addParam("comboKey", "Full Combo Key (X)", SCRIPT_PARAM_ONKEYDOWN, false, 88)
-			AutoplankMenu.combo:addParam("stopUlt", "Stop "..SkillR.name.." (R) If Target Can Die", SCRIPT_PARAM_ONOFF, false)
-			AutoplankMenu.combo:addParam("autoE", "Auto E if not in "..SkillR.name.." (R) Range while Ult", SCRIPT_PARAM_ONOFF, false)
-			AutoplankMenu.combo:addParam("detonateQ", "Try to Proc "..SkillQ.name.." (Q) Mark", SCRIPT_PARAM_ONOFF, false)
-			AutoplankMenu.combo:addParam("comboItems", "Use Items with Burst", SCRIPT_PARAM_ONOFF, true)
-			AutoplankMenu.combo:addParam("comboOrbwalk", "Orbwalk in Combo", SCRIPT_PARAM_ONOFF, true)
+			AutoplankMenu.combo:addParam("comboItems", "Use Items with Burst", SCRIPT_PARAM_ONOFF, false)
+			AutoplankMenu.combo:addParam("comboOrbwalk", "Orbwalk in Combo", SCRIPT_PARAM_ONOFF, false)
 		AutoplankMenu.combo:permaShow("comboKey")
 		---< Combo Menu
 		---> Harass Menu
 		AutoplankMenu:addSubMenu("["..myHero.charName.." - Harass Settings]", "harass")
 			AutoplankMenu.harass:addParam("harassKey", "Harass Hotkey (T)", SCRIPT_PARAM_ONKEYDOWN, false, 84)
-			AutoplankMenu.harass:addParam("hMode", "Harass Mode", SCRIPT_PARAM_LIST, 1, { "Q+E+W", "Q+W" })
-			AutoplankMenu.harass:addParam("detonateQ", "Proc Q Mark", SCRIPT_PARAM_ONOFF, true)
-			AutoplankMenu.harass:addParam("wharass", "Always "..SkillW.name.." (W)", SCRIPT_PARAM_ONOFF, true)
-			AutoplankMenu.harass:addParam("harassOrbwalk", "Orbwalk in Harass", SCRIPT_PARAM_ONOFF, true)
+			AutoplankMenu.harass:addParam("harassOrbwalk", "Orbwalk in Harass", SCRIPT_PARAM_ONOFF, false)
 		AutoplankMenu.harass:permaShow("harassKey")
 		---< Harass Menu
 		---> Farming Menu
 		AutoplankMenu:addSubMenu("["..myHero.charName.." - Farming Settings]", "farming")
-			AutoplankMenu.farming:addParam("farmKey", "Farming ON/Off (Z)", SCRIPT_PARAM_ONKEYTOGGLE, true, 90)
-			AutoplankMenu.farming:addParam("qFarm", "Farm with "..SkillQ.name.." (Q)", SCRIPT_PARAM_ONOFF, true)
-			AutoplankMenu.farming:addParam("wFarm", "Farm with "..SkillW.name.." (W)", SCRIPT_PARAM_ONOFF, true)
-			AutoplankMenu.farming:addParam("eFarm", "Farm with "..SkillE.name.." (E)", SCRIPT_PARAM_ONOFF, false)
+			AutoplankMenu.farming:addParam("farmKey", "Farming ON/Off (Z)", SCRIPT_PARAM_ONKEYTOGGLE, false, 90)
+			AutoplankMenu.farming:addParam("qFarm", "Farm with "..SkillQ.name.." (Q)", SCRIPT_PARAM_ONOFF, false)
 		AutoplankMenu.farming:permaShow("farmKey")
 		---< Farming Menu
 		---> Clear Menu
 		AutoplankMenu:addSubMenu("["..myHero.charName.." - Clear Settings]", "clear")
 			AutoplankMenu.clear:addParam("clearKey", "Jungle/Lane Clear Key", SCRIPT_PARAM_ONKEYDOWN, false, 86)
-			AutoplankMenu.clear:addParam("JungleFarm", "Use Skills to Farm Jungle", SCRIPT_PARAM_ONOFF, true)
-			AutoplankMenu.clear:addParam("ClearLane", "Use Skills to Clear Lane", SCRIPT_PARAM_ONOFF, true)
-			AutoplankMenu.clear:addParam("clearQ", "Clear with "..SkillQ.name.." (Q)", SCRIPT_PARAM_ONOFF, true)
-			AutoplankMenu.clear:addParam("clearW", "Clear with "..SkillW.name.." (W)", SCRIPT_PARAM_ONOFF, true)
-			AutoplankMenu.clear:addParam("clearE", "Clear with "..SkillE.name.." (E)", SCRIPT_PARAM_ONOFF, true)
-			AutoplankMenu.clear:addParam("clearOrbM", "OrbWalk Minions", SCRIPT_PARAM_ONOFF, true)
-			AutoplankMenu.clear:addParam("clearOrbJ", "OrbWalk Jungle", SCRIPT_PARAM_ONOFF, true)
+			AutoplankMenu.clear:addParam("JungleFarm", "Use Skills to Farm Jungle", SCRIPT_PARAM_ONOFF, false)
+			AutoplankMenu.clear:addParam("ClearLane", "Use Skills to Clear Lane", SCRIPT_PARAM_ONOFF, false)
+			AutoplankMenu.clear:addParam("clearQ", "Clear with "..SkillQ.name.." (Q)", SCRIPT_PARAM_ONOFF, false)
+			AutoplankMenu.clear:addParam("clearOrbM", "OrbWalk Minions", SCRIPT_PARAM_ONOFF, false)
+			AutoplankMenu.clear:addParam("clearOrbJ", "OrbWalk Jungle", SCRIPT_PARAM_ONOFF, false)
 		---< Clear Menu
 		---> KillSteal Menu
 		AutoplankMenu:addSubMenu("["..myHero.charName.." - KillSteal Settings]", "killsteal")
-			AutoplankMenu.killsteal:addParam("smartKS", "Use Smart Kill Steal", SCRIPT_PARAM_ONOFF, true)
-			AutoplankMenu.killsteal:addParam("ultKS", "Use "..SkillR.name.." (R) to KS", SCRIPT_PARAM_ONOFF, true)
-			AutoplankMenu.killsteal:addParam("itemsKS", "Use Items to KS", SCRIPT_PARAM_ONOFF, true)
-			AutoplankMenu.killsteal:addParam("Ignite", "Auto Ignite", SCRIPT_PARAM_ONOFF, true)
+			AutoplankMenu.killsteal:addParam("smartKS", "Use Smart Kill Steal", SCRIPT_PARAM_ONOFF, false)
+			AutoplankMenu.killsteal:addParam("ultKS", "Use "..SkillR.name.." (R) to KS", SCRIPT_PARAM_ONOFF, false)
+			AutoplankMenu.killsteal:addParam("itemsKS", "Use Items to KS", SCRIPT_PARAM_ONOFF, false)
+			AutoplankMenu.killsteal:addParam("Ignite", "Auto Ignite", SCRIPT_PARAM_ONOFF, false)
 		AutoplankMenu.killsteal:permaShow("smartKS")
 		---< KillSteal Menu
 		---> Drawing Menu
@@ -317,27 +308,26 @@ function AutoplankMenu()
 				AutoplankMenu.drawing.lfc:addParam("CLinfo", "Higher length = Lower FPS Drops", SCRIPT_PARAM_INFO, "")
 		end
 			AutoplankMenu.drawing:addParam("disableAll", "Disable All Ranges Drawing", SCRIPT_PARAM_ONOFF, false)
-			AutoplankMenu.drawing:addParam("drawText", "Draw Enemy Text", SCRIPT_PARAM_ONOFF, true)
-			AutoplankMenu.drawing:addParam("drawTargetText", "Draw Who I'm Targetting", SCRIPT_PARAM_ONOFF, true)
-			AutoplankMenu.drawing:addParam("drawQ", "Draw Bouncing Blades (Q) Range", SCRIPT_PARAM_ONOFF, true)
-			AutoplankMenu.drawing:addParam("drawW", "Draw Sinister Steel (W) Range", SCRIPT_PARAM_ONOFF, false)
-			AutoplankMenu.drawing:addParam("drawE", "Draw Shunpo (E) Range", SCRIPT_PARAM_ONOFF, false)
+			AutoplankMenu.drawing:addParam("drawText", "Draw Enemy Text", SCRIPT_PARAM_ONOFF, false)
+			AutoplankMenu.drawing:addParam("drawTargetText", "Draw Who I'm Targetting", SCRIPT_PARAM_ONOFF, false)
+			AutoplankMenu.drawing:addParam("drawQ", "Parrrley (Q) Range", SCRIPT_PARAM_ONOFF, false)
+			AutoplankMenu.drawing:addParam("drawE", "Raise Morale (E) Range", SCRIPT_PARAM_ONOFF, false)
 		---< Drawing Menu
 		---> Misc Menu
 		AutoplankMenu:addSubMenu("["..myHero.charName.." - Misc Settings]", "misc")
-			AutoplankMenu.misc:addParam("wardJumpKey", "Ward Jump Hotkey (G)", SCRIPT_PARAM_ONKEYDOWN, false, 71)
-			AutoplankMenu.misc:addParam("jumpAllies", "Jump To Allies if In Danger", SCRIPT_PARAM_ONOFF, true)
-			AutoplankMenu.misc:addParam("ZWItems", "Auto Zhonyas/Wooglets", SCRIPT_PARAM_ONOFF, true)
-			AutoplankMenu.misc:addParam("ZWHealth", "Min Health % for Zhonyas/Wooglets", SCRIPT_PARAM_SLICE, 15, 0, 100, -1)
-			AutoplankMenu.misc:addParam("aHP", "Auto Health Pots", SCRIPT_PARAM_ONOFF, true)
+			AutoplankMenu.misc:addParam("AutoW", "Auto W", SCRIPT_PARAM_ONOFF, false)
+			AutoplankMenu.misc:addParam("EHealth", "Min Health % for W", SCRIPT_PARAM_SLICE, 15, 0, 100, -1)
+			AutoplankMenu.misc:addParam("aHP", "Auto Health Pots", SCRIPT_PARAM_ONOFF, false)
 			AutoplankMenu.misc:addParam("HPHealth", "Min % for Health Pots", SCRIPT_PARAM_SLICE, 50, 0, 100, -1)
-			AutoplankMenu.misc:addParam("uTM", "Use Tick Manager/FPS Improver",SCRIPT_PARAM_ONOFF, false)
+			AutoplankMenu.misc:addParam("aMP", "Auto Health Pots", SCRIPT_PARAM_ONOFF, false)
+			AutoplankMenu.misc:addParam("MPMana", "Min % for Mana Pots", SCRIPT_PARAM_SLICE, 50, 0, 100, -1)
+			-- AutoplankMenu.misc:addParam("uTM", "Use Tick Manager/FPS Improver",SCRIPT_PARAM_ONOFF, false) --
 			AutoplankMenu.misc:addParam("AutoLevelSkills", "Auto Level Skills (Requires Reload)", SCRIPT_PARAM_LIST, 1, { "No", "Prioritise Q", "Prioritise W" })
-		AutoplankMenu.misc:permaShow("wardJumpKey")
+		AutoplankMenu.misc:permaShow("AutoW")
 		---< Misc Menu
 		---> Target Selector
-		TargetSelector = TargetSelector(TARGET_LESS_CAST, SkillE.range, DAMAGE_MAGIC, true)
-		TargetSelector.name = "Katarina"
+		TargetSelector = TargetSelector(TARGET_LESS_CAST, SkillQ.range, DAMAGE_PHYSICAL, true)
+		TargetSelector.name = "Gangplank"
 		AutoplankMenu:addTS(TargetSelector)
 		---< Target Selector
 		---> Arrange Priorities
@@ -363,19 +353,9 @@ function FullCombo()
 			if AutoplankMenu.combo.comboItems then
 				UseItems(Target)
 			end
+			CastR(Target)
+			CastSpell(_E)
 			CastQ(Target)
-			if AutoplankMenu.combo.detonateQ and GetTickCount() >= SkillQ.timeToHit then
-				if not SkillQ.ready then
-					CastE(Target)
-				end
-				if not SkillE.ready then
-					CastW(Target)
-				end
-			elseif not AutoplankMenu.combo.detonateQ then
-				CastE(Target)
-				CastW(Target)
-			end
-			CastR()
 		else
 			if AutoplankMenu.combo.comboOrbwalk then
 				moveToCursor()
@@ -384,3 +364,613 @@ function FullCombo()
 	end
 end
 -- / Full Combo Function / --
+
+-- / Harass Combo Function / --
+function HarassCombo()
+	if ValidTarget(Target) and Target ~= nil then
+		if AutoplankMenu.harass.harassOrbwalk then
+			OrbWalking(Target)
+		end
+		CastQ(Target)
+	else
+		if AutoplankMenu.harass.harassOrbwalk then
+			moveToCursor()
+		end
+	end
+end
+-- / Harass Combo Function / --
+
+-- / Farm Function / --
+function Farm()
+	for _, minion in pairs(enemyMinions.objects) do
+		local qMinionDmg = getDmg("Q", minion, myHero)
+		local adMinionDmg = getDmg("AD", minion, myHero)
+		local qFarmKey = AutoplankMenu.farming.qFarm
+		if ValidTarget(minion) and minion ~= nil then
+			if GetDistanceSqr(minion) <= SkillQ.range*SkillQ.range then
+				if qFarmKey then
+					if SkillQ.ready then
+						if minion.health <= (qMinionDmg + adMinionDmg) then
+							CastQ(minion)
+						end
+					end
+				end
+			end
+		end
+		break
+	end
+end
+-- / Farm Function / --
+
+-- / Clear Function / --
+function MixedClear()
+	--- Jungle Clear ---
+	if AutoplankMenu.clear.JungleFarm then
+		local JungleMob = GetJungleMob()
+		if JungleMob ~= nil then
+			if AutoplankMenu.clear.clearOrbJ then
+				OrbWalking(JungleMob)
+			end
+			if AutoplankMenu.clear.clearQ and SkillQ.ready and GetDistanceSqr(JungleMob) <= SkillQ.range*SkillQ.range then
+				CastQ(JungleMob)
+			end
+		else
+			if AutoplankMenu.clear.clearOrbJ then
+				moveToCursor()
+			end
+		end
+	end
+	--- Jungle Clear ---
+	--- Lane Clear ---
+	if AutoplankMenu.clear.ClearLane then
+		for _, minion in pairs(enemyMinions.objects) do
+			if ValidTarget(minion) and minion ~= nil then
+				if AutoplankMenu.clear.clearOrbM then
+					OrbWalking(minion)
+				end
+				if AutoplankMenu.clear.clearQ and SkillQ.ready and GetDistanceSqr(minion) <= SkillQ.range*SkillQ.range then
+					CastQ(minion)
+				end
+			else
+				if AutoplankMenu.clear.clearOrbM then
+					moveToCursor()
+				end
+			end
+		end
+	end
+	--- Lane Clear ---
+end
+-- / Clear Function / --
+
+-- / Casting Q Function / --
+function CastQ(enemy)
+	--- Dynamic Q Cast ---
+	if not SkillQ.ready or (GetDistanceSqr(enemy) > SkillQ.range*SkillQ.range) then
+		return false
+	end
+	if ValidTarget(enemy) and enemy ~= nil then
+		if VIP_USER then
+			Packet("S_CAST", {spellId = _Q, targetNetworkId = enemy.networkID}):send()
+			return true
+		else
+			CastSpell(_Q, enemy)
+		return true
+		end
+	end
+	return false
+end
+-- / Casting Q Function / --
+
+-- / Casting R Function / --
+function CastR()
+	if CountEnemyHeroInRange(SkillR.range) >= 1 then
+		if ValidTarget(enemy) and enemy ~= nil then
+			if VIP_USER then
+				Packet("S_CAST", {spellId = _R, targetNetworkId = enemy.networkID}):send()
+				return true
+			else
+				CastSpell(_R, enemy)
+			return true
+			end
+		end
+	end
+end
+-- / Casting R Function / --
+
+-- / Use Items Function / --
+function UseItems(enemy)
+	if not enemy then
+		enemy = Target
+	end
+	if ValidTarget(enemy) and enemy ~= nil then
+		if hydReady and GetDistanceSqr(enemy) <= 400*400 then
+			CastSpell(hydSlot, enemy)
+		end
+		if bwcReady and GetDistanceSqr(enemy) <= 500*500 then
+			CastSpell(bwcSlot, enemy)
+		end
+		if brkReady and GetDistanceSqr(enemy) <= 450*450 then
+			CastSpell(brkSlot, enemy)
+		end
+	end
+end
+-- / Use Items Function / --
+
+-- / Use Consumables Function / --
+function UseConsumables()
+	if AutoplankMenu.misc.aHP and isLow('Health') and not (UsingHPot or UsingFlask) and (Items.HealthPot.ready or Items.FlaskPot.ready) then
+		CastSpell((hpSlot or fskSlot))
+	end
+	if AutoplankMenu.misc.AutoW and isLow('Health')  and SkillW.ready then
+		CastSpell(_W)
+	end
+	if AutoplankMenu.misc.aMP and isLow('Mana') and not (UsingMPot or UsingFlask) and Items.HealthPot.ready then
+		CastSpell(mpSlot)
+	end
+end	
+-- / Use Consumables Function / --
+
+-- / Auto Ignite Function / --
+function AutoIgnite(enemy)
+	if enemy.health <= iDmg and GetDistanceSqr(enemy) <= 600*600 then
+		if iReady then
+			CastSpell(ignite, enemy)
+		end
+	end
+end
+-- / Auto Ignite Function / --
+
+-- / Damage Calculation Function / --
+function DamageCalculation()
+	for i=1, heroManager.iCount do
+		local enemy = heroManager:GetHero(i)
+		if ValidTarget(enemy) and enemy ~= nil then
+			hydDmg, bwcDmg = 0, 0
+			local qEnemyDmg = getDmg("Q", enemy, myHero)
+			local adEnemyDmg = getDmg("AD", enemy, myHero)
+			qDmg = ((SkillQ.ready and (qEnemyDmg + adEnemyDmg)) or 0)
+			rDmg = getDmg("R",enemy,myHero)
+			hydDmg = ((hydReady and getDmg("HYDRA", enemy, myHero)) or 0)
+			bwcDmg = ((bwcReady and getDmg("BWC", enemy, myHero)) or 0)
+			iDmg = ((ignite and getDmg("IGNITE", enemy, myHero)) or 0)
+			itemsDmg = hydDmg + bwcDmg + iDmg
+			if enemy.health <= qDmg then
+				if SkillQ.ready then
+					KillText[i] = 1
+				else
+					KillText[i] = 11
+				end
+			elseif enemy.health <= rDmg then
+				if SkillR.ready then
+					KillText[i] = 2
+				else
+					KillText[i] = 11
+				end
+			elseif enemy.health <= (qDmg + rDmg) and SkillQ.ready and SkillR.ready then
+				if SkillQ.ready and SkillR.ready then
+					KillText[i] = 3
+				else
+					KillText[i] = 11
+				end
+			elseif enemy.health <= (qDmg + rDmg + itemsDmg) and SkillQ.ready and SkillR.ready then
+				if SkillQ.ready and SkillR.ready then
+					KillText[i] = 4
+				else
+					KillText[i] = 11
+				end
+			end
+		end
+	end
+end
+-- / Damage Calculation Function / --
+
+-- / KillSteal Function / --
+function KillSteal()
+	for _, enemy in pairs(enemyHeroes) do
+		if enemy ~= nil and ValidTarget(enemy) then
+			local distance = GetDistanceSqr(enemy)
+			local health = enemy.health
+			if health <= qDmg and SkillQ.ready and (distance <= SkillQ.range*SkillQ.range) then
+				CastQ(enemy)
+			elseif AutoplankMenu.killsteal.ultKS then
+				if health <= (qDmg + rDmg) and SkillQ.ready and SkillR.ready and (distance <= SkillQ.range*SkillQ.range) then
+					CastQ(enemy)
+					CastR(enemy)
+				end
+				if health <= rDmg and distance <= (SkillR.range*SkillR.range) then
+					CastR(enemy)
+				end
+			elseif AutoplankMenu.killsteal.itemsKS then
+				if health <= (qDmg + rDmg + itemsDmg) and SkillQ.ready and SkillR.ready then
+					UseItems(enemy)
+				end
+			end
+		end
+	end
+end
+-- / KillSteal Function / --
+
+-- / Misc Functions / --
+	--- Danger Check ---
+	function DangerCheck()
+		if isInDanger(myHero) then
+			CastSpell(_W)
+			CastSpell(_E)
+		end
+	end
+	--- Danger Check ---
+	--- Get Mouse Pos Function by Klokje ---
+	function getMousePos(range)
+		local temprange = range or SkillWard.range
+		local MyPos = Vector(myHero.x, myHero.y, myHero.z)
+		local MousePos = Vector(mousePos.x, mousePos.y, mousePos.z)
+		return MyPos - (MyPos - MousePos):normalized() * SkillWard.range
+	end
+	--- Get Mouse Pos Function by Klokje ---
+	--- Checking if Hero in Danger ---
+	function isInDanger(hero)
+		nEnemiesClose, nEnemiesFar = 0, 0
+		hpPercent = hero.health / hero.maxHealth
+		for _, enemy in pairs(enemyHeroes) do
+			if not enemy.dead and hero:GetDistance(enemy) <= 200 then
+				nEnemiesClose = nEnemiesClose + 1
+				if hpPercent < 0.5 and hpPercent < enemy.health / enemy.maxHealth then
+					return true
+				end
+			elseif not enemy.dead and hero:GetDistance(enemy) <= 1000 then
+				nEnemiesFar = nEnemiesFar + 1
+			end
+		end
+		if nEnemiesClose > 1 then
+			return true
+		end
+		if nEnemiesClose == 1 and nEnemiesFar > 1 then
+			return true
+		end
+		return false
+	end
+	--- Checking if Hero in Danger ---
+	--- Get Jungle Mob Function by Apple ---
+	function GetJungleMob()
+		for _, Mob in pairs(JungleFocusMobs) do
+			if ValidTarget(Mob, SkillQ.range) then
+				return Mob
+			end
+		end
+		for _, Mob in pairs(JungleMobs) do
+			if ValidTarget(Mob, SkillQ.range) then
+				return Mob
+			end
+		end
+	end
+	--- Get Jungle Mob Function by Apple ---
+	--- Arrange Priorities 5v5 ---
+	function ArrangePriorities()
+		for i, enemy in pairs(enemyHeroes) do
+			SetPriority(priorityTable.AD_Carry, enemy, 1)
+			SetPriority(priorityTable.AP, enemy, 2)
+			SetPriority(priorityTable.Support, enemy, 3)
+			SetPriority(priorityTable.Bruiser, enemy, 4)
+			SetPriority(priorityTable.Tank, enemy, 5)
+		end
+	end
+	--- Arrange Priorities 5v5 ---
+	--- Arrange Priorities 3v3 ---
+	function ArrangeTTPriorities()
+		for i, enemy in pairs(enemyHeroes) do
+			SetPriority(priorityTable.AD_Carry, enemy, 1)
+			SetPriority(priorityTable.AP, enemy, 1)
+			SetPriority(priorityTable.Support, enemy, 2)
+			SetPriority(priorityTable.Bruiser, enemy, 2)
+			SetPriority(priorityTable.Tank, enemy, 3)
+		end
+	end
+	--- Arrange Priorities 3v3 ---
+	--- Set Priorities ---
+	function SetPriority(table, hero, priority)
+		for i = 1, #table do
+			if hero.charName:find(table[i]) ~= nil then
+				TS_SetHeroPriority(priority, hero.charName)
+			end
+		end
+	end
+	--- Set Priorities ---
+-- / Misc Functions / --
+
+-- / On Create Obj Function / --
+function OnCreateObj(obj)
+	if obj ~= nil then
+		if obj.name:find("Global_Item_HealthPotion.troy") then
+			if GetDistanceSqr(obj, myHero) <= 70*70 then
+				UsingHPot = true
+			end
+		end
+		if obj.valid and (string.find(obj.name, "Ward") ~= nil or string.find(obj.name, "Wriggle") ~= nil or string.find(obj.name, "Trinket")) then
+			Wards[#Wards+1] = obj
+		end
+		if FocusJungleNames[obj.name] then
+			JungleFocusMobs[#JungleFocusMobs+1] = obj
+		elseif JungleMobNames[obj.name] then
+			JungleMobs[#JungleMobs+1] = obj
+		end
+	end
+end
+-- / On Create Obj Function / --
+
+-- / On Delete Obj Function / --
+function OnDeleteObj(obj)
+	if obj ~= nil then
+		if obj.name:find("TeleportHome.troy") then
+			Recall = false
+		end
+		if obj.name:find("Global_Item_HealthPotion.troy") then
+			UsingHPot = false
+		end
+		for i, Mob in pairs(JungleMobs) do
+			if obj.name == Mob.name then
+				table.remove(JungleMobs, i)
+			end
+		end
+		for i, Mob in pairs(JungleFocusMobs) do
+			if obj.name == Mob.name then
+				table.remove(JungleFocusMobs, i)
+			end
+		end
+		for i, ward in pairs(Wards) do
+			if not ward.valid or (obj.name == ward.name and obj.x == ward.x and obj.z == ward.z) then
+				table.remove(Wards, i)
+			end
+		end
+	end
+end
+-- / On Delete Obj Function / --
+
+-- / On Draw Function / --
+function OnDraw()
+	if not TManager.onDraw:isReady() and AutoplankMenu.misc.uTM then
+		return
+	end
+	if not myHero.dead then
+		if not AutoplankMenu.drawing.disableAll then
+			if SkillQ.ready and AutoplankMenu.drawing.drawQ then
+				DrawCircle(myHero.x, myHero.y, myHero.z, SkillQ.range, SkillQ.color)
+			end
+			if SkillE.ready and AutoplankMenu.drawing.drawE then
+				DrawCircle(myHero.x, myHero.y, myHero.z, SkillE.range, SkillE.color)
+			end
+		end
+	end
+	if AutoplankMenu.drawing.drawText then
+		for i = 1, heroManager.iCount do
+			local enemy = heroManager:GetHero(i)
+			if ValidTarget(enemy) and enemy ~= nil then
+				local barPos = WorldToScreen(D3DXVECTOR3(enemy.x, enemy.y, enemy.z)) --(Credit to Zikkah)
+				local PosX = barPos.x - 35
+				local PosY = barPos.y - 10
+				if KillText[i] ~= 10 then
+					DrawText(TextList[KillText[i]], 16, PosX, PosY, colorText)
+				else
+					DrawText(TextList[KillText[i]] .. string.format("%4.1f", ((enemy.health - (qDmg + pDmg + wDmg + eDmg + itemsDmg)) * (1/rDmg)) * 2.5) .. "s = Kill", 16, PosX, PosY, colorText)
+				end
+			end
+		end
+	end
+	if Target then
+		if AutoplankMenu.drawing.drawTargetText then
+			DrawText("Targeting: " .. Target.charName, 12, 100, 100, colorText)
+		end
+	end
+end
+-- / On Draw Function / --
+
+-- / OrbWalking Functions / --
+	--- Orbwalking Target ---
+	function OrbWalking(Target)
+		if TimeToAttack() and GetDistanceSqr(Target) <= (myHero.range + GetDistance(myHero.minBBox))*(myHero.range + GetDistance(myHero.minBBox)) then
+			myHero:Attack(Target)
+		elseif heroCanMove() then
+			moveToCursor()
+		end
+	end
+	--- Orbwalking Target ---
+	--- Check When Its Time To Attack ---
+	function TimeToAttack()
+		return (GetTickCount() + GetLatency() * .5 > lastAttack + lastAttackCD)
+	end
+	--- Check When Its Time To Attack ---
+	--- Prevent AA Canceling ---
+	function heroCanMove()
+		return (GetTickCount() + GetLatency() * .5 > lastAttack + lastWindUpTime + 20)
+	end
+	--- Prevent AA Canceling ---
+	function moveToCursor()
+		if GetDistance(mousePos) then
+			local moveToPos = myHero + (Vector(mousePos) - myHero):normalized()*300
+			if not VIP_USER then
+				myHero:MoveTo(moveToPos.x, moveToPos.z)
+			else
+				Packet('S_MOVE', {x = moveToPos.x, y = moveToPos.z}):send()
+			end
+		end	
+	end
+	--- Move to Mouse ---
+	--- On Process Spell ---
+	function OnProcessSpell(object,spell)
+		if not TManager.onSpell:isReady() and AutoplankMenu.misc.uTM then
+			return
+		end
+		if object == myHero then
+			if spell.name:lower():find("attack") then
+				lastAttack = GetTickCount() - GetLatency()*0.5
+				lastWindUpTime = spell.windUpTime*1000
+				lastAttackCD = spell.animationTime*1000
+			end
+		end
+	end
+	--- On Process Spell ---
+-- / OrbWalking Functions / --
+
+/ FPS Manager Functions / --
+class 'TickManager'
+	--- TM Init Function ---
+	function TickManager:__init(ticksPerSecond)
+		self.TPS = ticksPerSecond
+		self.lastClock = 0
+		self.currentClock = 0
+	end
+	--- TM Init Function ---
+	--- TM Type Function ---
+	function TickManager:__type()
+		return "TickManager"
+	end
+	--- TM Init Function ---
+	--- Set TPS Function ---
+	function TickManager:setTPS(ticksPerSecond)
+		self.TPS = ticksPerSecond
+	end
+	--- Set TPS Function ---
+	--- Get TPS Function ---
+	function TickManager:getTPS(ticksPerSecond)
+		return self.TPS
+	end
+	--- Get TPS Function ---
+	--- TM Ready Function ---
+	function TickManager:isReady()
+		self.currentClock = os.clock()
+		if self.currentClock < self.lastClock + (1 / self.TPS) then
+			return false
+		end
+		self.lastClock = self.currentClock
+		return true
+	end
+	--- TM Ready Function ---
+-- / FPS Manager Functions / --
+
+-- / Lag Free Circles Functions / --
+if VIP_USER then
+	--- Draw Circle Next Level Function ---
+	function DrawCircleNextLvl(x, y, z, radius, width, color, chordlength)
+		radius = radius or 300
+		quality = math.max(8, round(180 / math.deg((math.asin((chordlength / (2 * radius)))))))
+		quality = 2 * math.pi / quality
+		radius = radius * .92
+		local points = {}
+		for theta = 0, 2 * math.pi + quality, quality do
+			local c = WorldToScreen(D3DXVECTOR3(x + radius * math.cos(theta), y, z - radius * math.sin(theta)))
+			points[#points + 1] = D3DXVECTOR2(c.x, c.y)
+		end
+		DrawLines2(points, width or 1, color or 4294967295)
+	end
+	--- Draw Cicle Next Level Function ---
+	--- Round Function ---
+	function round(num)
+		if num >= 0 then
+			return math.floor(num+.5)
+		else
+			return math.ceil(num-.5)
+		end
+	end
+	--- Round Function ---
+	--- Draw Cicle 2 Function ---
+	function DrawCircle2(x, y, z, radius, color)
+		local vPos1 = Vector(x, y, z)
+		local vPos2 = Vector(cameraPos.x, cameraPos.y, cameraPos.z)
+		local tPos = vPos1 - (vPos1 - vPos2):normalized() * radius
+		local sPos = WorldToScreen(D3DXVECTOR3(tPos.x, tPos.y, tPos.z))
+		if OnScreen({ x = sPos.x, y = sPos.y }, { x = sPos.x, y = sPos.y }) then
+			DrawCircleNextLvl(x, y, z, radius, 1, color, AutoplankMenu.drawing.lfc.CL)
+		end
+	end
+	--- Draw Cicle 2 Function ---
+end
+-- / Lag Free Circles Functions /
+
+-- / Checks Function / --
+function Checks()
+	--- Tick Manager Check ---
+	if not TManager.onTick:isReady() and AutoplankMenu.misc.uTM then
+		return
+	end
+	--- Tick Manager Check ---
+	if VIP_USER then
+		if not AutoplankMenu.drawing.lfc.LagFree then
+			_G.DrawCircle = _G.oldDrawCircle
+		else
+			_G.DrawCircle = DrawCircle2
+		end
+	end
+	--- Updates & Checks if Target is Valid ---
+	tsTarget = GetTarget()
+	if tsTarget and tsTarget.type == "obj_AI_Hero" then
+		Target = tsTarget
+	else
+		Target = nil
+	end
+	--- Updates & Checks if Target is Valid ---
+	--- Checks and finds Ignite ---
+	if myHero:GetSpellData(SUMMONER_1).name:find("SummonerDot") then
+		ignite = SUMMONER_1
+	elseif myHero:GetSpellData(SUMMONER_2).name:find("SummonerDot") then
+		ignite = SUMMONER_2
+	end
+	--- Checks and finds Ignite ---
+	--- Slots for Items ---
+	hpSlot, mpSlot, fskSlot =	GetInventorySlotItem(2003), GetInventorySlotItem(2004), GetInventorySlotItem(2041)
+	hydSlot =	GetInventorySlotItem(3074)
+	bwcSlot, brkSlot =	GetInventorySlotItem(3144), GetInventorySlotItem(3153)
+	--- Slots for Items ---
+	--- Checks if Spells are Ready ---
+	SkillQ.ready = (myHero:CanUseSpell(_Q) == READY)
+	SkillW.ready = (myHero:CanUseSpell(_W) == READY)
+	SkillE.ready = (myHero:CanUseSpell(_E) == READY)
+	SkillR.ready = (myHero:CanUseSpell(_R) == READY)
+	iReady = (ignite ~= nil and myHero:CanUseSpell(ignite) == READY)
+	--- Checks if Spells are Ready ---
+	--- Checks if Active Items are Ready ---
+	hydReady	= (hydSlot ~= nil and myHero:CanUseSpell(hydSlot) == READY)
+	bwcReady	= (bwcSlot ~= nil and myHero:CanUseSpell(bwcSlot) == READY)
+	brkReady	= (brkSlot ~= nil and myHero:CanUseSpell(brkSlot) == READY)
+	--- Checks if Items are Ready ---
+	--- Checks if Health Pots / Mana Pots are Ready ---
+	Items.HealthPot.ready = (hpSlot ~= nil and myHero:CanUseSpell(hpSlot) == READY)
+	Items.FlaskPot.ready = (fskSlot ~= nil and myHero:CanUseSpell(fskSlot) == READY)
+	Items.ManaPot.ready = (mpSlot ~= nil and myHero:CanUseSpell(mpSlot) == READY)
+	--- Checks if Health Pots / Mana Pots are Ready ---
+	--- Updates Minions ---
+	enemyMinions:update()
+	allyMinions:update()
+	--- Updates Minions ---
+end
+-- / Checks Function / --
+
+-- / isLow Function / --
+function isLow(Name)
+	if Name == 'Health' then
+		if (myHero.health * (1/myHero.maxHealth)) <= (AutoplankMenu.misc.HPHealth * 0.01) then
+			return true
+		else
+			return false
+		end
+	end
+	if Name == 'Mana' then
+		if (myHero.mana * (1/myHero.maxMana)) <= (AutoplankMenu.misc.MPMana * 0.01) then
+			return true
+		else
+			return false
+		end
+	end
+end
+-- / isLow Function / --
+
+-- / GetTarget Function / --
+function GetTarget()
+	TargetSelector:update()
+    if _G.MMA_Target and _G.MMA_Target.type == myHero.type then
+		return _G.MMA_Target
+	end
+    if _G.AutoCarry and _G.AutoCarry.Crosshair and _G.AutoCarry.Attack_Crosshair and _G.AutoCarry.Attack_Crosshair.target and _G.AutoCarry.Attack_Crosshair.target.type == myHero.type then
+		return _G.AutoCarry.Attack_Crosshair.target
+	end
+	return TargetSelector.target
+end
+-- / GetTarget Function / --
