@@ -1,4 +1,4 @@
-local version = "0.100"
+local version = "0.101"
 
 --[[
 
@@ -286,7 +286,7 @@ RyzeMenu = scriptConfig("Ryze - RyzeCracker", "Ryze")
 	---> Combo Menu <---
 	RyzeMenu:addSubMenu("["..myHero.charName.." - Combo Settings]", "combo")
 	RyzeMenu.combo:addParam("comboKey", "Full Combo Key (X)", SCRIPT_PARAM_ONKEYDOWN, false, 88)
-	RyzeMenu.combo:addParam("autoW", "Auto W Enemies", SCRIPT_PARAM_ONOFF, false)
+	RyzeMenu.combo:addParam("autoW", "Auto W Enemies - Not working yet", SCRIPT_PARAM_ONOFF, false)
 	RyzeMenu.combo:addParam("comboItems", "Use Items with Burst", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.combo:addParam("comboOrbwalk", "Orbwalk in Combo", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.combo:permaShow("comboKey")
@@ -315,7 +315,7 @@ RyzeMenu = scriptConfig("Ryze - RyzeCracker", "Ryze")
 	RyzeMenu.clear:addParam("clearE", "Clear with "..SkillE.name.." (E)", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:addParam("clearOrbM", "OrbWalk Minions", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:addParam("clearOrbJ", "OrbWalk Jungle", SCRIPT_PARAM_ONOFF, true)
-	RyzeMenu.farming:permaShow("clearKey")
+	RyzeMenu.clear:permaShow("clearKey")
 	---> Clear Menu <---
 	---> KillSteal Menu <---
 	RyzeMenu:addSubMenu("["..myHero.charName.." - KillSteal Settings]", "killsteal")
@@ -698,7 +698,7 @@ function DamageCalculation()
 				else
 					KillText[i] = 10
 				end
-			elseif (enemy.health <= (qDmg + wDmg + eDmg + itemsDmg) or enemy.health <= (qDmg + pDmg + wDmg + eDmg + itemsDmg)) and SkillQ.ready and SkillW.ready and SkillE.ready then
+			elseif enemy.health <= (qDmg + wDmg + eDmg + itemsDmg) and SkillQ.ready and SkillW.ready and SkillE.ready then
 				if SkillQ.ready and SkillW.ready and SkillE.ready then
 					KillText[i] = 9
 				else
@@ -822,11 +822,6 @@ function OnDeleteObj(obj)
 		for i, Mob in pairs(JungleFocusMobs) do
 			if obj.name == Mob.name then
 				table.remove(JungleFocusMobs, i)
-			end
-		end
-		for i, ward in pairs(Wards) do
-			if not ward.valid or (obj.name == ward.name and obj.x == ward.x and obj.z == ward.z) then
-				table.remove(Wards, i)
 			end
 		end
 	end
