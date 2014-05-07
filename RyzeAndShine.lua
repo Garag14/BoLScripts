@@ -12,7 +12,7 @@ local version = "0.101"
 |/   \__/   \_/   (_______/(_______/  |/     \||/    )_)(______/   \_______)|/     \|\_______/|/    )_)(_______/
 
 
-Script - Rycecracker - 0.100 by Garag
+Script - Ryze and Shine - 0.101 by Garag
 
 Changelog :
 0.100 - PreAlpha-Release
