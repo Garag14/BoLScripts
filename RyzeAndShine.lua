@@ -2,20 +2,21 @@ local version = "0.101"
 
 --[[
 
- _______           _______  _______  _______  _______  _______  _______  _        _______  _______ 
-(  ____ )|\     /|/ ___   )(  ____ \(  ____ \(  ____ )(  ___  )(  ____ \| \    /\(  ____ \(  ____ )
-| (    )|( \   / )\/   )  || (    \/| (    \/| (    )|| (   ) || (    \/|  \  / /| (    \/| (    )|
-| (____)| \ (_) /     /   )| (__    | |      | (____)|| (___) || |      |  (_/ / | (__    | (____)|
-|     __)  \   /     /   / |  __)   | |      |     __)|  ___  || |      |   _ (  |  __)   |     __)
-| (\ (      ) (     /   /  | (      | |      | (\ (   | (   ) || |      |  ( \ \ | (      | (\ (   
-| ) \ \__   | |    /   (_/\| (____/\| (____/\| ) \ \__| )   ( || (____/\|  /  \ \| (____/\| ) \ \__
-|/   \__/   \_/   (_______/(_______/(_______/|/   \__/|/     \|(_______/|_/    \/(_______/|/   \__/
+ _______           _______  _______    _______  _        ______     _______          _________ _        _______ 
+(  ____ )|\     /|/ ___   )(  ____ \  (  ___  )( (    /|(  __  \   (  ____ \|\     /|\__   __/( (    /|(  ____ \
+| (    )|( \   / )\/   )  || (    \/  | (   ) ||  \  ( || (  \  )  | (    \/| )   ( |   ) (   |  \  ( || (    \/
+| (____)| \ (_) /     /   )| (__      | (___) ||   \ | || |   ) |  | (_____ | (___) |   | |   |   \ | || (__    
+|     __)  \   /     /   / |  __)     |  ___  || (\ \) || |   | |  (_____  )|  ___  |   | |   | (\ \) ||  __)   
+| (\ (      ) (     /   /  | (        | (   ) || | \   || |   ) |        ) || (   ) |   | |   | | \   || (      
+| ) \ \__   | |    /   (_/\| (____/\  | )   ( || )  \  || (__/  )  /\____) || )   ( |___) (___| )  \  || (____/\
+|/   \__/   \_/   (_______/(_______/  |/     \||/    )_)(______/   \_______)|/     \|\_______/|/    )_)(_______/
 
 
 Script - Rycecracker - 0.100 by Garag
 
 Changelog :
-0.100 - Alpha Release
+0.100 - PreAlpha-Release
+0.101 - Alpha-Release after Bugfixing
 
 Thanks to:
 
@@ -31,9 +32,9 @@ end
 
 -- / Auto-Update Function / --
 local Ryze_Autoupdate = true
-local UPDATE_SCRIPT_NAME = "RyzeCracker"
+local UPDATE_SCRIPT_NAME = "Ryze and Shine"
 local UPDATE_HOST = "github.com"
-local UPDATE_PATH = "/Garag14/BoLScripts/blob/Private/RyzeCracker.lua".."?rand="..math.random(1,10000)
+local UPDATE_PATH = "/Garag14/BoLScripts/blob/Private/RyzeAndShine.lua".."?rand="..math.random(1,10000)
 local UPDATE_FILE_PATH = SCRIPT_PATH..GetCurrentEnv().FILE_NAME
 local UPDATE_URL = "https://"..UPDATE_HOST..UPDATE_PATH
 function AutoupdaterMsg(msg) print("<font color=\"#FF0000\">"..UPDATE_SCRIPT_NAME..":</font> <font color=\"#FFFFFF\">"..msg..".</font>") end
@@ -282,7 +283,7 @@ end
 -- / Menu Function / --
 function RyzeMenu()
 --- Main Menu ---
-RyzeMenu = scriptConfig("Ryze - RyzeCracker", "Ryze")
+RyzeMenu = scriptConfig("Ryze - Ryze and Shine", "Ryze")
 	---> Combo Menu <---
 	RyzeMenu:addSubMenu("["..myHero.charName.." - Combo Settings]", "combo")
 	RyzeMenu.combo:addParam("comboKey", "Full Combo Key (X)", SCRIPT_PARAM_ONKEYDOWN, false, 88)
