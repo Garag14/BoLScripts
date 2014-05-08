@@ -82,7 +82,7 @@ function OnTick()
 	if RyzeMenu.combo.autoW then
 		for _, enemy in pairs(enemyHeroes) do
 			if ValidTarget(enemy) and enemy ~= nil and GetDistanceSqr(enemy) > SkillW.range*SkillW.range then
-				CastE(enemy)
+				CastW(enemy)
 			end
 		end
 	end
@@ -378,10 +378,17 @@ function FullCombo()
 		if RyzeMenu.combo.comboItems then
 			UseItems(Target)
 		end
-		CastR()
-		CastE(Target)
-		CastW(Target)
-		CastQ(Target)
+		if SkillQ.ready and SkillW.ready and SkillE.ready and SkillR.ready then
+			CastQ(Target)
+		elseif SkillW.ready and SkillE.ready and SkillR.ready and not SkillQ.ready then
+			CastR()
+		elseif SkillQ.ready and SkillW.ready and SkillE.ready and not SkillR.ready then
+			CastE(Target)
+		elseif  SkillQ.ready and SkillW.ready and not SkillE.ready and not SkillR.ready then
+			CastW(Target)
+		elseif  SkillQ.ready and not SkillW.ready and not SkillE.ready and not SkillR.ready then
+			CastQ(Target)
+		end
 	else
 		if RyzeMenu.combo.comboOrbwalk then
 			moveToCursor()
@@ -400,8 +407,11 @@ function HarassCombo()
 		end
 		--- Harass Mode 1 E+Q ---
 		if RyzeMenu.harass.hMode == 1 then
-			CastE(Target)
-			CastQ(Target)
+			if SkillQ.ready and SkillE.ready then
+				CastE(Target)
+			elseif SkillQ.ready and not SkillE.ready then
+				CastQ(Target)
+			end
 		end
 		--- Harass Mode 1 ---
 		--- Harass Mode 2 Q ---
