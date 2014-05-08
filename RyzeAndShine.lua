@@ -1,4 +1,4 @@
-local version = "0.101"
+local version = "0.102"
 
 --[[
 
@@ -12,11 +12,14 @@ local version = "0.101"
 |/   \__/   \_/   (_______/(_______/  |/     \||/    )_)(______/   \_______)|/     \|\_______/|/    )_)(_______/
 
 
-Script - Ryze and Shine - 0.101 by Garag
+Script - Ryze and Shine - 0.102 by Garag
 
 Changelog :
-0.100 - PreAlpha-Release
-0.101 - Alpha-Release after Bugfixing
+0.100 - 	PreAlpha-Release
+0.101 - 	Alpha-Release after Bugfixing
+0.102 - 	Fixed Combo from Q-E-R-W to Q-R-E-W-Q
+			Fixed AutoW
+			Fixed E + Q Harass
 
 Thanks to:
 
@@ -81,7 +84,7 @@ function OnTick()
 	end
 	if RyzeMenu.combo.autoW then
 		for _, enemy in pairs(enemyHeroes) do
-			if ValidTarget(enemy) and enemy ~= nil and GetDistanceSqr(enemy) > SkillW.range*SkillW.range then
+			if ValidTarget(enemy) and enemy ~= nil and GetDistanceSqr(enemy) <= SkillW.range*SkillW.range then
 				CastW(enemy)
 			end
 		end
@@ -378,17 +381,11 @@ function FullCombo()
 		if RyzeMenu.combo.comboItems then
 			UseItems(Target)
 		end
-		if SkillQ.ready and SkillW.ready and SkillE.ready and SkillR.ready then
-			CastQ(Target)
-		elseif SkillW.ready and SkillE.ready and SkillR.ready and not SkillQ.ready then
-			CastR()
-		elseif SkillQ.ready and SkillW.ready and SkillE.ready and not SkillR.ready then
-			CastE(Target)
-		elseif  SkillQ.ready and SkillW.ready and not SkillE.ready and not SkillR.ready then
-			CastW(Target)
-		elseif  SkillQ.ready and not SkillW.ready and not SkillE.ready and not SkillR.ready then
-			CastQ(Target)
-		end
+		CastQ(Target)
+		CastR()
+		CastE(Target)
+		CastW(Target)
+		CastQ(Target)
 	else
 		if RyzeMenu.combo.comboOrbwalk then
 			moveToCursor()
