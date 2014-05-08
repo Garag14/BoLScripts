@@ -49,15 +49,15 @@ if Ryze_Autoupdate then
 		if ServerVersion then
 			ServerVersion = tonumber(ServerVersion)
 			if tonumber(version) < ServerVersion then
-				AutoupdaterMsg("New version available"..ServerVersion)
-				AutoupdaterMsg("Updating, please don't press F9")
+				AutoupdaterMsg("Ryze and Shine: New version available"..ServerVersion)
+				AutoupdaterMsg("Ryze and Shine: Updating, please don't press F9")
 				DownloadFile(UPDATE_URL, UPDATE_FILE_PATH, function () AutoupdaterMsg("Successfully updated. ("..version.." => "..ServerVersion.."), press F9 twice to load the updated version.") end)	
 			else
-				AutoupdaterMsg("You have got the latest version ("..ServerVersion..")")
+				AutoupdaterMsg("Ryze and Shine: You have got the latest version ("..ServerVersion..")")
 			end
 		end
 	else
-		AutoupdaterMsg("Error downloading version info")
+		AutoupdaterMsg("Ryze and Shine: Error downloading version info")
 	end
 end
 -- / Auto-Update Function / --
@@ -290,7 +290,7 @@ RyzeMenu = scriptConfig("Ryze - Ryze and Shine", "Ryze")
 	---> Combo Menu <---
 	RyzeMenu:addSubMenu("["..myHero.charName.." - Combo Settings]", "combo")
 	RyzeMenu.combo:addParam("comboKey", "Full Combo Key (X)", SCRIPT_PARAM_ONKEYDOWN, false, 88)
-	RyzeMenu.combo:addParam("autoW", "Auto W Enemies - Not working yet", SCRIPT_PARAM_ONOFF, false)
+	RyzeMenu.combo:addParam("autoW", "Auto W Enemies", SCRIPT_PARAM_ONOFF, false)
 	RyzeMenu.combo:addParam("comboItems", "Use Items with Burst", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.combo:addParam("comboOrbwalk", "Orbwalk in Combo", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.combo:permaShow("comboKey")
