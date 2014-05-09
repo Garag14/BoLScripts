@@ -736,10 +736,10 @@ function KillSteal()
 				CastW(enemy)
 			elseif health <= (qDmg + eDmg) and SkillQ.ready and SkillE.ready and (distance <= SkillE.range*SkillE.range) then
 				CastE(enemy)
-			elseif health <= (wDmg + eDmg) and SkillW.ready and SkillE.ready and (distance <= SkillW.range*SkillW.range) then
-				CastW(enemy)
+			elseif health <= (wDmg + eDmg) and SkillW.ready and SkillE.ready and (distance <= SkillE.range*SkillE.range) then
+				CastE(enemy)
 			elseif health <= (qDmg + wDmg + eDmg) and SkillQ.ready and SkillW.ready and SkillE.ready and (distance <= SkillW.range*SkillW.range) then
-				CastW(enemy)
+				CastE(enemy)
 			elseif RyzeMenu.killsteal.itemsKS then
 				if health <= (qDmg + wDmg + eDmg + itemsDmg) then
 					if SkillQ.ready and SkillW.ready and SkillE.ready then
