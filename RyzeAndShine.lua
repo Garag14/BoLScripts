@@ -20,6 +20,8 @@ Changelog :
 0.102 - 	Fixed Combo from Q-E-R-W to Q-R-E-W-Q
 			Fixed AutoW
 			Fixed E + Q Harass
+0.103 -		Optimized Killsteal
+			Saw that AutoUpdate is not working yet :( Disabled until I get it fixed!
 
 Thanks to:
 
