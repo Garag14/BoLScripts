@@ -1,4 +1,4 @@
-local version = "0.102"
+local version = "0.103"
 
 --[[
 
@@ -12,7 +12,7 @@ local version = "0.102"
 |/   \__/   \_/   (_______/(_______/  |/     \||/    )_)(______/   \_______)|/     \|\_______/|/    )_)(_______/
 
 
-Script - Ryze and Shine - 0.102 by Garag
+Script - Ryze and Shine - 0.103 by Garag
 
 Changelog :
 0.100 - 	PreAlpha-Release
