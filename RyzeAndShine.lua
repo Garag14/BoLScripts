@@ -22,6 +22,7 @@ Changelog :
 			Fixed E + Q Harass
 0.103 -		Optimized Killsteal
 			Saw that AutoUpdate is not working yet :( Disabled until I get it fixed!
+0.104 - 	Fixed AutoUpdate
 
 Thanks to:
 
@@ -38,7 +39,7 @@ end
 -- / Auto-Update Function / --
 local Ryze_Autoupdate = true
 local UPDATE_SCRIPT_NAME = "Ryze and Shine"
-local UPDATE_HOST = "github.com"
+local UPDATE_HOST = "raw.githubusercontent.com"
 local UPDATE_PATH = "/Garag14/BoLScripts/blob/Private/RyzeAndShine.lua".."?rand="..math.random(1,10000)
 local UPDATE_FILE_PATH = SCRIPT_PATH..GetCurrentEnv().FILE_NAME
 local UPDATE_URL = "https://"..UPDATE_HOST..UPDATE_PATH
