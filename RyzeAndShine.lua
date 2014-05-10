@@ -684,31 +684,31 @@ function DamageCalculation()
 				else
 					KillText[i] = 10
 				end
-			elseif enemy.health <= (qDmg + wDmg) and SkillQ.ready and SkillW.ready then
+			elseif enemy.health <= (qDmg + wDmg) then
 				if SkillQ.ready and SkillW.ready then
 					KillText[i] = 5
 				else
 					KillText[i] = 10
 				end
-			elseif enemy.health <= (qDmg + eDmg) and SkillQ.ready and SkillE.ready then
+			elseif enemy.health <= (qDmg + eDmg) then
 				if SkillQ.ready and SkillE.ready then
 					KillText[i] = 6
 				else
 					KillText[i] = 10
 				end
-			elseif enemy.health <= (wDmg + eDmg) and SkillW.ready and SkillE.ready then
+			elseif enemy.health <= (wDmg + eDmg) then
 				if SkillW.ready and SkillE.ready then
 					KillText[i] = 7
 				else
 					KillText[i] = 10
 				end
-			elseif enemy.health <= (qDmg + wDmg + eDmg) and SkillQ.ready and SkillW.ready and SkillE.ready then
+			elseif enemy.health <= (qDmg + wDmg + eDmg) then
 				if SkillQ.ready and SkillW.ready and SkillE.ready then
 					KillText[i] = 8
 				else
 					KillText[i] = 10
 				end
-			elseif enemy.health <= (qDmg + wDmg + eDmg + itemsDmg) and SkillQ.ready and SkillW.ready and SkillE.ready then
+			elseif enemy.health <= (qDmg + wDmg + eDmg + itemsDmg) then
 				if SkillQ.ready and SkillW.ready and SkillE.ready then
 					KillText[i] = 9
 				else
