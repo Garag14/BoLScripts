@@ -44,7 +44,7 @@ end
 local Ryze_Autoupdate = true
 local UPDATE_SCRIPT_NAME = "Ryze and Shine"
 local UPDATE_HOST = "raw.githubusercontent.com"
-local UPDATE_PATH = "/Garag14/BoLScripts/Private/RyzeAndShine.lua"
+local UPDATE_PATH = "/Garag14/BoLScripts/Private/RyzeAndShine.lua".."?rand="..math.random(1,10000)
 local UPDATE_FILE_PATH = SCRIPT_PATH..GetCurrentEnv().FILE_NAME
 local UPDATE_URL = "https://"..UPDATE_HOST..UPDATE_PATH
 function AutoupdaterMsg(msg)
