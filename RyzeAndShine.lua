@@ -313,6 +313,7 @@ RyzeMenu = scriptConfig("Ryze - Ryze and Shine", "Ryze")
 	RyzeMenu.farming:addParam("farmKey", "Farming ON/Off (Z)", SCRIPT_PARAM_ONKEYTOGGLE, true, 90)
 	RyzeMenu.farming:addParam("qFarm", "Farm with "..SkillQ.name.." (Q)", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.farming:addParam("eFarm", "Farm with "..SkillE.name.." (E)", SCRIPT_PARAM_ONOFF, true)
+	RyzeMenu.farming:addParam("aaFarm", "Lasthit by attack (AA)", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.farming:permaShow("farmKey")
 	---> Farming Menu <---
 	---> Clear Menu <---
@@ -323,6 +324,7 @@ RyzeMenu = scriptConfig("Ryze - Ryze and Shine", "Ryze")
 	RyzeMenu.clear:addParam("clearQ", "Clear with "..SkillQ.name.." (Q)", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:addParam("clearW", "Clear with "..SkillW.name.." (W)", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:addParam("clearE", "Clear with "..SkillE.name.." (E)", SCRIPT_PARAM_ONOFF, true)
+	RyzeMenu.clear:addParam("clearAA", "Clear with Attack (AA)", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:addParam("clearOrbM", "OrbWalk Minions", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:addParam("clearOrbJ", "OrbWalk Jungle", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:permaShow("clearKey")
@@ -361,7 +363,7 @@ RyzeMenu = scriptConfig("Ryze - Ryze and Shine", "Ryze")
 	RyzeMenu.misc:addParam("AutoLevelSkills", "Auto Level Skills (Requires Reload)", SCRIPT_PARAM_LIST, 1, { "No", "Prioritise Q", "Prioritise E" })
 	---> Misc Menu <---
 	---> Target Selector <---
-	TargetSelector = TargetSelector(TARGET_LESS_CAST, SkillQ.range, DAMAGE_MAGIC, true)
+	TargetSelector = TargetSelector(TARGET_PRIORITY, SkillQ.range, DAMAGE_MAGIC, true)
 	TargetSelector.name = "Ryze"
 	RyzeMenu:addTS(TargetSelector)
 	---> Target Selector <---
@@ -437,10 +439,12 @@ function Farm()
 		--- Minion Damages ---
 		local qMinionDmg = getDmg("Q", minion, myHero)
 		local eMinionDmg = getDmg("E", minion, myHero)
+		local aaMinionDmg = getDmg("AD", minion, myHero)
 		--- Minion Damages ---
 		--- Minion Keys ---
 		local qFarmKey = RyzeMenu.farming.qFarm
 		local eFarmKey = RyzeMenu.farming.eFarm
+		local aaFarmKey = RyzeMenu.farming.aaFarm
 		--- Minion Keys ---
 		--- Farming Minions ---
 		if ValidTarget(minion) and minion ~= nil then
@@ -458,6 +462,15 @@ function Farm()
 					if SkillE.ready then
 						if minion.health <= (eMinionDmg) then
 							CastE(minion)
+						end
+					end
+				end
+			end
+			if GetDistanceSqr(minion) <= myHero.range*myHero.range then
+				if aaFarmKey then
+					if myHero.canAttack then
+						if minion.health <= (aaMinionDmg) then
+							myHero:Attack(minion)
 						end
 					end
 				end
@@ -487,6 +500,9 @@ function MixedClear()
 			if RyzeMenu.clear.clearQ and SkillQ.ready and GetDistanceSqr(JungleMob) <= SkillQ.range*SkillQ.range then
 				CastQ(JungleMob)
 			end
+			if RyzeMenu.clear.clearAA and myHero.canAttack and GetDistanceSqr(JungleMob) <= myHero.range*myHero.range then
+				myHero.Attack(JungleMob)
+			end
 		else
 			if RyzeMenu.clear.clearOrbJ then
 				moveToCursor()
@@ -506,6 +522,9 @@ function MixedClear()
 				end
 				if RyzeMenu.clear.clearQ and SkillQ.ready and GetDistanceSqr(minion) <= SkillQ.range*SkillQ.range then
 					CastQ(minion)
+				end
+				if RyzeMenu.clear.clearAA and myHero.canAttack and GetDistanceSqr(minion) <= myHero.range*myHero.range then
+					myHero.Attack(minion)
 				end
 			else
 				if RyzeMenu.clear.clearOrbM then
@@ -814,6 +833,30 @@ end
 	end
 	--- Set Priorities ---
 -- / Misc Functions / --
+
+-- / On Create Obj Function / --
+function OnCreateObj(obj)
+	--- All of Our Objects (CREATE) --
+	if obj ~= nil then
+		if obj.name:find("Global_Item_HealthPotion.troy") then
+			if GetDistanceSqr(obj, myHero) <= 70*70 then
+				UsingHPot = true
+			end
+		end
+		if obj.name:find("Global_Item_ManaPotion.troy") then
+			if GetDistanceSqr(obj, myHero) <= 70*70 then
+				UsingMPot = true
+			end
+		end
+		if FocusJungleNames[obj.name] then
+			JungleFocusMobs[#JungleFocusMobs+1] = obj
+		elseif JungleMobNames[obj.name] then
+			JungleMobs[#JungleMobs+1] = obj
+		end
+	end
+	--- All of Our Objects (CREATE) --
+end
+-- / On Create Obj Function / --
 
 -- / On Delete Obj Function / --
 function OnDeleteObj(obj)
