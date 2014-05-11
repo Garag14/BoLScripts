@@ -1,4 +1,4 @@
-local version = "0.105"
+local version = "0.106"
 
 --[[
 
@@ -12,7 +12,7 @@ local version = "0.105"
 |/   \__/   \_/   (_______/(_______/  |/     \||/    )_)(______/   \_______)|/     \|\_______/|/    )_)(_______/
 
 
-Script - Ryze and Shine - 0.105 by Garag
+Script - Ryze and Shine - 0.106 by Garag
 
 Changelog :
 0.100 - 	PreAlpha-Release
@@ -24,6 +24,8 @@ Changelog :
 			Saw that AutoUpdate is not working yet :( Disabled until I get it fixed!
 0.104 - 	Tried to fix AutoUpdate
 0.105 -		Fixed a Bug for text on Champions... have to test it
+0.106 -		Added AutoAttack-Farming and Clearing
+			Fixed Target-Slector to Priority-Mode
 
 Thanks to:
 
