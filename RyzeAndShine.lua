@@ -1,4 +1,4 @@
-local version = "0.107"
+local version = "0.108"
 
 --[[
 
@@ -12,7 +12,7 @@ local version = "0.107"
 |/   \__/   \_/   (_______/(_______/  |/     \||/    )_)(______/   \_______)|/     \|\_______/|/    )_)(_______/
 
 
-Script - Ryze and Shine - 0.107 by Garag
+Script - Ryze and Shine - 0.108 by Garag
 
 Changelog :
 0.100 - 	PreAlpha-Release
@@ -27,6 +27,9 @@ Changelog :
 0.106 -		Added AutoAttack-Farming (Interrupted by Orbwalker, try to fix this later)
 			Fixed Target-Slector to Priority-Mode
 0.107 -		Again worked on Autoupdate, hope it works fine now
+0.108 -		Another Bugfixing-Update
+			AA-Clear and Farm disabled, to buggy
+			Autoupdate still don't work :(
 
 Thanks to:
 
@@ -300,7 +303,7 @@ function RyzeMenu()
 RyzeMenu = scriptConfig("Ryze - Ryze and Shine", "Ryze")
 	---> Combo Menu <---
 	RyzeMenu:addSubMenu("["..myHero.charName.." - Combo Settings]", "combo")
-	RyzeMenu.combo:addParam("comboKey", "Full Combo Key (X)", SCRIPT_PARAM_ONKEYDOWN, false, 88)
+	RyzeMenu.combo:addParam("comboKey", "Full Combo Key (Space)", SCRIPT_PARAM_ONKEYDOWN, false, 32)
 	RyzeMenu.combo:addParam("autoW", "Auto W Enemies", SCRIPT_PARAM_ONOFF, false)
 	RyzeMenu.combo:addParam("comboItems", "Use Items with Burst", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.combo:addParam("comboOrbwalk", "Orbwalk in Combo", SCRIPT_PARAM_ONOFF, true)
@@ -315,10 +318,10 @@ RyzeMenu = scriptConfig("Ryze - Ryze and Shine", "Ryze")
 	---> Harass Menu <---
 	---> Farming Menu <---
 	RyzeMenu:addSubMenu("["..myHero.charName.." - Farming Settings]", "farming")
-	RyzeMenu.farming:addParam("farmKey", "Farming ON/Off (Z)", SCRIPT_PARAM_ONKEYTOGGLE, true, 90)
+	RyzeMenu.farming:addParam("farmKey", "Farming ON/Off (Z)", SCRIPT_PARAM_ONKEYTOGGLE, false, 90)
 	RyzeMenu.farming:addParam("qFarm", "Farm with "..SkillQ.name.." (Q)", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.farming:addParam("eFarm", "Farm with "..SkillE.name.." (E)", SCRIPT_PARAM_ONOFF, true)
-	RyzeMenu.farming:addParam("aaFarm", "Lasthit by attack (AA)", SCRIPT_PARAM_ONOFF, true)
+	--RyzeMenu.farming:addParam("aaFarm", "Lasthit by attack (AA)", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.farming:permaShow("farmKey")
 	---> Farming Menu <---
 	---> Clear Menu <---
@@ -329,7 +332,7 @@ RyzeMenu = scriptConfig("Ryze - Ryze and Shine", "Ryze")
 	RyzeMenu.clear:addParam("clearQ", "Clear with "..SkillQ.name.." (Q)", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:addParam("clearW", "Clear with "..SkillW.name.." (W)", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:addParam("clearE", "Clear with "..SkillE.name.." (E)", SCRIPT_PARAM_ONOFF, true)
-	RyzeMenu.clear:addParam("clearAA", "Clear with Attack (AA)", SCRIPT_PARAM_ONOFF, true)
+	--RyzeMenu.clear:addParam("clearAA", "Clear with Attack (AA)", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:addParam("clearOrbM", "OrbWalk Minions", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:addParam("clearOrbJ", "OrbWalk Jungle", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:permaShow("clearKey")
@@ -373,7 +376,7 @@ RyzeMenu = scriptConfig("Ryze - Ryze and Shine", "Ryze")
 	RyzeMenu:addTS(TargetSelector)
 	---> Target Selector <---
 	---> Arrange Priorities <---
-	if heroManager.iCount < 10 then -- borrowed from Sidas Auto Carry, modified to 3v3
+	if heroManager.iCount < 10 then
 		PrintChat(" >> Too few champions to arrange priority")
 	elseif heroManager.iCount == 6 and TTMAP then
 		ArrangeTTPriorities()
@@ -471,7 +474,7 @@ function Farm()
 					end
 				end
 			end
-			if GetDistanceSqr(minion) <= myHero.range*myHero.range then
+			--[[if GetDistanceSqr(minion) <= myHero.range*myHero.range then
 				if aaFarmKey then
 					if myHero.canAttack then
 						if minion.health <= (aaMinionDmg) then
@@ -479,7 +482,7 @@ function Farm()
 						end
 					end
 				end
-			end
+			end]]--
 			break
 		end
 	end
@@ -505,9 +508,9 @@ function MixedClear()
 			if RyzeMenu.clear.clearQ and SkillQ.ready and GetDistanceSqr(JungleMob) <= SkillQ.range*SkillQ.range then
 				CastQ(JungleMob)
 			end
-			if RyzeMenu.clear.clearAA and myHero.canAttack and GetDistanceSqr(JungleMob) <= myHero.range*myHero.range then
+			--[[if RyzeMenu.clear.clearAA and myHero.canAttack and GetDistanceSqr(JungleMob) <= myHero.range*myHero.range then
 				myHero.Attack(JungleMob)
-			end
+			end]]--
 		else
 			if RyzeMenu.clear.clearOrbJ then
 				moveToCursor()
@@ -528,9 +531,9 @@ function MixedClear()
 				if RyzeMenu.clear.clearQ and SkillQ.ready and GetDistanceSqr(minion) <= SkillQ.range*SkillQ.range then
 					CastQ(minion)
 				end
-				if RyzeMenu.clear.clearAA and myHero.canAttack and GetDistanceSqr(minion) <= myHero.range*myHero.range then
+				--[[if RyzeMenu.clear.clearAA and myHero.canAttack and GetDistanceSqr(minion) <= myHero.range*myHero.range then
 					myHero.Attack(minion)
-				end
+				end]]--
 			else
 				if RyzeMenu.clear.clearOrbM then
 					moveToCursor()
@@ -922,7 +925,7 @@ function OnDraw()
 				if KillText[i] ~= 10 then
 					DrawText(TextList[KillText[i]], 16, PosX, PosY, colorText)
 				else
-					DrawText(TextList[KillText[i]] .. string.format("%4.1f", ((enemy.health - (qDmg + wDmg + eDmg + itemsDmg)) * (1/rDmg)) * 2.5) .. "s = Kill", 16, PosX, PosY, colorText)
+					DrawText(TextList[KillText[i]] .. string.format("%4.1f", ((enemy.health - (qDmg + wDmg + eDmg + itemsDmg)) .. "s = Kill", 16, PosX, PosY, colorText)
 				end
 			end
 		end
