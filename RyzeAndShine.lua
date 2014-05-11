@@ -24,7 +24,7 @@ Changelog :
 			Saw that AutoUpdate is not working yet :( Disabled until I get it fixed!
 0.104 - 	Tried to fix AutoUpdate
 0.105 -		Fixed a Bug for text on Champions... have to test it
-0.106 -		Added AutoAttack-Farming and Clearing
+0.106 -		Added AutoAttack-Farming - Works if you don't Orbwalk
 			Fixed Target-Slector to Priority-Mode
 
 Thanks to:
@@ -74,6 +74,7 @@ end
 function OnLoad()
 	Variables()
 	RyzeMenu()
+	myTrueRange = myHero.range + GetDistance(myHero.minBBox)
 end
 -- / Loading Function / --
 
@@ -135,6 +136,7 @@ function Variables()
 	SkillW = {range = 600, name = "Rune Prison", ready = false, color = ARGB(255, 32,178,170)}
 	SkillE = {range = 600, name = "Spell Flux",	ready = false,	color = ARGB(255,128, 0 ,128)}
 	SkillR = {range = 0, name = "Desperate Power", ready = false}
+	AA = {color = ARGB(255, 0 ,255, 0 )}
 	--- Skills Vars ---
 	--- Items Vars ---
 	Items = {
@@ -326,7 +328,6 @@ RyzeMenu = scriptConfig("Ryze - Ryze and Shine", "Ryze")
 	RyzeMenu.clear:addParam("clearQ", "Clear with "..SkillQ.name.." (Q)", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:addParam("clearW", "Clear with "..SkillW.name.." (W)", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:addParam("clearE", "Clear with "..SkillE.name.." (E)", SCRIPT_PARAM_ONOFF, true)
-	RyzeMenu.clear:addParam("clearAA", "Clear with Attack (AA)", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:addParam("clearOrbM", "OrbWalk Minions", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:addParam("clearOrbJ", "OrbWalk Jungle", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:permaShow("clearKey")
@@ -468,7 +469,7 @@ function Farm()
 					end
 				end
 			end
-			if GetDistanceSqr(minion) <= myHero.range*myHero.range then
+			if GetDistanceSqr(minion) <= myTrueRange*myTrueRange then
 				if aaFarmKey then
 					if myHero.canAttack then
 						if minion.health <= (aaMinionDmg) then
@@ -502,9 +503,6 @@ function MixedClear()
 			if RyzeMenu.clear.clearQ and SkillQ.ready and GetDistanceSqr(JungleMob) <= SkillQ.range*SkillQ.range then
 				CastQ(JungleMob)
 			end
-			if RyzeMenu.clear.clearAA and myHero.canAttack and GetDistanceSqr(JungleMob) <= myHero.range*myHero.range then
-				myHero.Attack(JungleMob)
-			end
 		else
 			if RyzeMenu.clear.clearOrbJ then
 				moveToCursor()
@@ -522,11 +520,11 @@ function MixedClear()
 				if RyzeMenu.clear.clearE and SkillE.ready and GetDistanceSqr(minion) <= SkillE.range*SkillE.range then
 					CastE(minion)
 				end
+				if RyzeMenu.clear.clearW and SkillW.ready and GetDistanceSqr(minion) <= SkillW.range*SkillW.range then
+					CastW(minion)
+				end
 				if RyzeMenu.clear.clearQ and SkillQ.ready and GetDistanceSqr(minion) <= SkillQ.range*SkillQ.range then
 					CastQ(minion)
-				end
-				if RyzeMenu.clear.clearAA and myHero.canAttack and GetDistanceSqr(minion) <= myHero.range*myHero.range then
-					myHero.Attack(minion)
 				end
 			else
 				if RyzeMenu.clear.clearOrbM then
@@ -895,6 +893,7 @@ function OnDraw()
 	--- Drawing Our Ranges ---
 	if not myHero.dead then
 		if not RyzeMenu.drawing.disableAll then
+			DrawCircle(myHero.x, myHero.y, myHero.z, myTrueRange, AA.color)
 			if SkillQ.ready and RyzeMenu.drawing.drawQ then
 				DrawCircle(myHero.x, myHero.y, myHero.z, SkillQ.range, SkillQ.color)
 			end
@@ -935,46 +934,51 @@ end
 -- / On Draw Function / --
 
 -- / OrbWalking Functions / --
---- Orbwalking Target ---
+	--- Orbwalk info ---
+	local lastAttack, lastWindUpTime, lastAttackCD = 0, 0, 0
+	local myTrueRange = 0
+	local myTarget = nil
+	--- Orbwalk info ---
+	--- Orbwalking Target ---
 	function OrbWalking(Target)
-		if TimeToAttack() and GetDistanceSqr(Target) <= (myHero.range + GetDistance(myHero.minBBox))*(myHero.range + GetDistance(myHero.minBBox)) then
-			myHero:Attack(Target)
-		elseif heroCanMove() then
-			moveToCursor()
+		myTarget = GetTarget() --our target is teh currently selected one(you can also use the targetselector whatever)
+		if myTarget ~=nil and GetDistance(myTarget) <= myTrueRange then --if it valid then lets go
+			if timeToShoot() then --see code later
+				myHero:Attack(myTarget ) --AA
+			elseif heroCanMove()  then --if we cant attack but we can move
+				moveToCursor() --we move to cursor
+			end
+		else		
+			moveToCursor() --if the target isnt valid we jsut move to cursor
 		end
 	end
 	--- Orbwalking Target ---
 	--- Check When Its Time To Attack ---
-	function TimeToAttack()
-		return (GetTickCount() + GetLatency() * .5 > lastAttack + lastAttackCD)
-	end
+	function timeToShoot()
+		return (GetTickCount() + GetLatency()/2 > lastAttack + lastAttackCD) --if aa ready, we can shoot
+	end 
 	--- Check When Its Time To Attack ---
 	--- Prevent AA Canceling ---
 	function heroCanMove()
-		return (GetTickCount() + GetLatency() * .5 > lastAttack + lastWindUpTime + 20)
-	end
+		return (GetTickCount() + GetLatency()/2 > lastAttack + lastWindUpTime + 20) --if aa on cd, we can move
+	end 
 	--- Prevent AA Canceling ---
 	--- Move to Mouse ---
 	function moveToCursor()
-		if GetDistance(mousePos) then
-			local moveToPos = myHero + (Vector(mousePos) - myHero):normalized()*300
-			if not VIP_USER then
-				myHero:MoveTo(moveToPos.x, moveToPos.z)
-			else
-				Packet('S_MOVE', {x = moveToPos.x, y = moveToPos.z}):send()
-			end
-		end	
+		if GetDistance(mousePos) > 10 then --well not rly much to say 
+			local moveToPos = myHero + (Vector(mousePos) - myHero):normalized()*250 --we just move 250 units in direction of our mouse
+			myHero:MoveTo(moveToPos.x, moveToPos.z) --and there we go
+		end 
 	end
 	--- Move to Mouse ---
 	--- On Process Spell ---
-	function OnProcessSpell(object,spell)
-	if not TManager.onSpell:isReady() and RyzeMenu.misc.uTM then return end
-		if object == myHero then
-			if spell.name:lower():find("attack") then
-				lastAttack = GetTickCount() - GetLatency()*0.5
-				lastWindUpTime = spell.windUpTime*1000
-				lastAttackCD = spell.animationTime*1000
-			end
+	function OnProcessSpell(object, spell) --if smth happens
+		if object == myHero then --if we are teh owner from teh object
+			if spell.name:lower():find("attack") then --and the name is attack
+				lastAttack = GetTickCount() - GetLatency()/2 --the last attack is GetTickCount, that is the curent time - getlatenxy/2, why 2? because we need the time for the attack client-server and server-client
+				lastWindUpTime = spell.windUpTime*1000 --the lastwinduptime
+				lastAttackCD = spell.animationTime*1000 --and our "cd"
+			end 
 		end
 	end
 	--- On Process Spell ---
