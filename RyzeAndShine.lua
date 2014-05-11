@@ -137,6 +137,7 @@ function Variables()
 	SkillW = {range = 600, name = "Rune Prison", ready = false, color = ARGB(255, 32,178,170)}
 	SkillE = {range = 600, name = "Spell Flux",	ready = false,	color = ARGB(255,128, 0 ,128)}
 	SkillR = {range = 0, name = "Desperate Power", ready = false}
+	AA = {range = myTrueRange, name = "attack", ready = false, color = ARGB(255, 0 ,255, 0 )}
 	--- Skills Vars ---
 	--- Items Vars ---
 	Items = {
