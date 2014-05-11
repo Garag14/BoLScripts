@@ -1,4 +1,4 @@
-local version = "0.104"
+local version = "0.105"
 
 --[[
 
@@ -12,7 +12,7 @@ local version = "0.104"
 |/   \__/   \_/   (_______/(_______/  |/     \||/    )_)(______/   \_______)|/     \|\_______/|/    )_)(_______/
 
 
-Script - Ryze and Shine - 0.104 by Garag
+Script - Ryze and Shine - 0.105 by Garag
 
 Changelog :
 0.100 - 	PreAlpha-Release
@@ -22,7 +22,8 @@ Changelog :
 			Fixed E + Q Harass
 0.103 -		Optimized Killsteal
 			Saw that AutoUpdate is not working yet :( Disabled until I get it fixed!
-0.104 - 	Fixed AutoUpdate
+0.104 - 	Tried to fix AutoUpdate
+0.105 -		Fixed a Bug for text on Champions... have to test it
 
 Thanks to:
 
@@ -40,13 +41,15 @@ end
 local Ryze_Autoupdate = true
 local UPDATE_SCRIPT_NAME = "Ryze and Shine"
 local UPDATE_HOST = "raw.githubusercontent.com"
-local UPDATE_PATH = "/Garag14/BoLScripts/blob/Private/RyzeAndShine.lua".."?rand="..math.random(1,10000)
+local UPDATE_PATH = "/Garag14/BoLScripts/blob/Private/RyzeAndShine.lua"
 local UPDATE_FILE_PATH = SCRIPT_PATH..GetCurrentEnv().FILE_NAME
 local UPDATE_URL = "https://"..UPDATE_HOST..UPDATE_PATH
-function AutoupdaterMsg(msg) print("<font color=\"#FF0000\">"..UPDATE_SCRIPT_NAME..":</font> <font color=\"#FFFFFF\">"..msg..".</font>") end
+function AutoupdaterMsg(msg)
+	print("<font color=\"#FF0000\">"..UPDATE_SCRIPT_NAME..":</font> <font color=\"#FFFFFF\">"..msg..".</font>")
+end
 if Ryze_Autoupdate then
 	local ServerData = GetWebResult(UPDATE_HOST, UPDATE_PATH)
-	if ServerData then
+	if ServerData ~= nil then
 		local ServerVersion = string.match(ServerData, "local version = \"%d+.%d+\"")
 		ServerVersion = string.match(ServerVersion and ServerVersion or "", "%d+.%d+")
 		if ServerVersion then
@@ -870,7 +873,7 @@ function OnDraw()
 				if KillText[i] ~= 10 then
 					DrawText(TextList[KillText[i]], 16, PosX, PosY, colorText)
 				else
-					DrawText(TextList[KillText[i]] .. string.format("%4.1f", ((enemy.health - (qDmg + pDmg + wDmg + eDmg + itemsDmg)) * (1/rDmg)) * 2.5) .. "s = Kill", 16, PosX, PosY, colorText)
+					DrawText(TextList[KillText[i]] .. string.format("%4.1f", ((enemy.health - (qDmg + wDmg + eDmg + itemsDmg)) * (1/rDmg)) * 2.5) .. "s = Kill", 16, PosX, PosY, colorText)
 				end
 			end
 		end
