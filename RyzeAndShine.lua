@@ -925,7 +925,7 @@ function OnDraw()
 				if KillText[i] ~= 10 then
 					DrawText(TextList[KillText[i]], 16, PosX, PosY, colorText)
 				else
-					DrawText(TextList[KillText[i]] .. string.format("%4.1f", ((enemy.health - (qDmg + wDmg + eDmg + itemsDmg)) .. "s = Kill", 16, PosX, PosY, colorText)
+					DrawText(TextList[KillText[i]] .. string.format("%4.1f", ((enemy.health - (qDmg + wDmg + eDmg + itemsDmg))) * 2.5) .. "s = Kill", 16, PosX, PosY, colorText)
 				end
 			end
 		end
