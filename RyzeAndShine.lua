@@ -1,4 +1,4 @@
-local version = "0.108"
+local version = "0.109"
 
 --[[
 
@@ -12,7 +12,7 @@ local version = "0.108"
 |/   \__/   \_/   (_______/(_______/  |/     \||/    )_)(______/   \_______)|/     \|\_______/|/    )_)(_______/
 
 
-Script - Ryze and Shine - 0.108 by Garag
+Script - Ryze and Shine - 0.109 by Garag
 
 Changelog :
 0.100 - 	PreAlpha-Release
@@ -30,6 +30,8 @@ Changelog :
 0.108 -		Another Bugfixing-Update
 			AA-Clear and Farm disabled, to buggy
 			Autoupdate still don't work :(
+0.109 - 	Fixed Orbwalker, Autoattack to enemy Heros and Minions working now
+			Jungle-Clear added as own Submenu, but not working yet, dont know if you realy need it...
 
 Thanks to:
 
@@ -107,6 +109,7 @@ function OnTick()
 	FarmingKey = RyzeMenu.farming.farmKey
 	HarassKey =	RyzeMenu.harass.harassKey
 	ClearKey =	RyzeMenu.clear.clearKey
+	JungleKey = RyzeMenu.jungle.jungleKey
 	-- Menu Variables --
 	if ComboKey then
 		FullCombo()
@@ -120,6 +123,9 @@ function OnTick()
 	if ClearKey then
 		MixedClear()
 	end	
+	if JungleKey then
+		JungleClear()
+	end
 	if RyzeMenu.killsteal.smartKS then
 		KillSteal()
 	end
@@ -321,22 +327,28 @@ RyzeMenu = scriptConfig("Ryze - Ryze and Shine", "Ryze")
 	RyzeMenu.farming:addParam("farmKey", "Farming ON/Off (Z)", SCRIPT_PARAM_ONKEYTOGGLE, false, 90)
 	RyzeMenu.farming:addParam("qFarm", "Farm with "..SkillQ.name.." (Q)", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.farming:addParam("eFarm", "Farm with "..SkillE.name.." (E)", SCRIPT_PARAM_ONOFF, true)
-	--RyzeMenu.farming:addParam("aaFarm", "Lasthit by attack (AA)", SCRIPT_PARAM_ONOFF, true)
+	RyzeMenu.farming:addParam("aaFarm", "Lasthit by attack (AA)", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.farming:permaShow("farmKey")
 	---> Farming Menu <---
 	---> Clear Menu <---
-	RyzeMenu:addSubMenu("["..myHero.charName.." - Clear Settings]", "clear")
-	RyzeMenu.clear:addParam("clearKey", "Jungle/Lane Clear Key", SCRIPT_PARAM_ONKEYDOWN, false, 86)
-	RyzeMenu.clear:addParam("JungleFarm", "Use Skills to Farm Jungle", SCRIPT_PARAM_ONOFF, true)
-	RyzeMenu.clear:addParam("ClearLane", "Use Skills to Clear Lane", SCRIPT_PARAM_ONOFF, true)
+	RyzeMenu:addSubMenu("["..myHero.charName.." - Clear Lane Settings]", "clear")
+	RyzeMenu.clear:addParam("clearKey", "Lane Clear Key", SCRIPT_PARAM_ONKEYDOWN, false, 86)
+	RyzeMenu.clear:addParam("ClearLane", "Use to Clear Lane", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:addParam("clearQ", "Clear with "..SkillQ.name.." (Q)", SCRIPT_PARAM_ONOFF, true)
-	RyzeMenu.clear:addParam("clearW", "Clear with "..SkillW.name.." (W)", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:addParam("clearE", "Clear with "..SkillE.name.." (E)", SCRIPT_PARAM_ONOFF, true)
-	--RyzeMenu.clear:addParam("clearAA", "Clear with Attack (AA)", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:addParam("clearOrbM", "OrbWalk Minions", SCRIPT_PARAM_ONOFF, true)
-	RyzeMenu.clear:addParam("clearOrbJ", "OrbWalk Jungle", SCRIPT_PARAM_ONOFF, true)
 	RyzeMenu.clear:permaShow("clearKey")
 	---> Clear Menu <---
+	---> Clear Jungle <---
+	RyzeMenu:addSubMenu("["..myHero.charName.." - Clear Jungle Settings]", "jungle")
+	RyzeMenu.jungle:addParam("jungleKey", "Jungle Clear Key", SCRIPT_PARAM_ONKEYDOWN, false, 78)
+	RyzeMenu.jungle:addParam("JungleFarm", "Use to Farm Jungle", SCRIPT_PARAM_ONOFF, true)
+	RyzeMenu.jungle:addParam("clearJQ", "Clear with "..SkillQ.name.." (Q)", SCRIPT_PARAM_ONOFF, true)
+	RyzeMenu.jungle:addParam("clearJW", "Clear with "..SkillW.name.." (W) - Jungle only", SCRIPT_PARAM_ONOFF, true)	
+	RyzeMenu.jungle:addParam("clearJE", "Clear with "..SkillE.name.." (E)", SCRIPT_PARAM_ONOFF, true)
+	RyzeMenu.jungle:addParam("clearOrbJ", "OrbWalk Jungle", SCRIPT_PARAM_ONOFF, true)	
+	RyzeMenu.jungle:permaShow("jungleKey")
+	---> Clear Jungle <---
 	---> KillSteal Menu <---
 	RyzeMenu:addSubMenu("["..myHero.charName.." - KillSteal Settings]", "killsteal")
 	RyzeMenu.killsteal:addParam("smartKS", "Use Smart Kill Steal", SCRIPT_PARAM_ONOFF, true)
@@ -447,12 +459,12 @@ function Farm()
 		--- Minion Damages ---
 		local qMinionDmg = getDmg("Q", minion, myHero)
 		local eMinionDmg = getDmg("E", minion, myHero)
-		--local aaMinionDmg = getDmg("AD", minion, myHero)
+		local aaMinionDmg = getDmg("AD", minion, myHero)
 		--- Minion Damages ---
 		--- Minion Keys ---
 		local qFarmKey = RyzeMenu.farming.qFarm
 		local eFarmKey = RyzeMenu.farming.eFarm
-		--local aaFarmKey = RyzeMenu.farming.aaFarm
+		local aaFarmKey = RyzeMenu.farming.aaFarm
 		--- Minion Keys ---
 		--- Farming Minions ---
 		if ValidTarget(minion) and minion ~= nil then
@@ -474,7 +486,7 @@ function Farm()
 					end
 				end
 			end
-			--[[if GetDistanceSqr(minion) <= myHero.range*myHero.range then
+			if GetDistanceSqr(minion) <= myHero.range*myHero.range then
 				if aaFarmKey then
 					if myHero.canAttack then
 						if minion.health <= (aaMinionDmg) then
@@ -482,7 +494,7 @@ function Farm()
 						end
 					end
 				end
-			end]]--
+			end
 			break
 		end
 	end
@@ -492,32 +504,6 @@ end
 
 -- / Clear Function / --
 function MixedClear()
-	--- Jungle Clear ---
-	if RyzeMenu.clear.JungleFarm then
-		local JungleMob = GetJungleMob()
-		if JungleMob ~= nil then
-			if RyzeMenu.clear.clearOrbJ then
-				OrbWalking(JungleMob)
-			end
-			if RyzeMenu.clear.clearE and SkillE.ready and GetDistanceSqr(JungleMob) <= SkillE.range*SkillE.range then
-				CastE(JungleMob)
-			end
-			if RyzeMenu.clear.clearW and SkillW.ready and GetDistanceSqr(JungleMob) <= SkillW.range*SkillW.range then
-				CastW(JungleMob)
-			end
-			if RyzeMenu.clear.clearQ and SkillQ.ready and GetDistanceSqr(JungleMob) <= SkillQ.range*SkillQ.range then
-				CastQ(JungleMob)
-			end
-			--[[if RyzeMenu.clear.clearAA and myHero.canAttack and GetDistanceSqr(JungleMob) <= myHero.range*myHero.range then
-				myHero.Attack(JungleMob)
-			end]]--
-		else
-			if RyzeMenu.clear.clearOrbJ then
-				moveToCursor()
-			end
-		end
-	end
-	--- Jungle Clear ---
 	--- Lane Clear ---
 	if RyzeMenu.clear.ClearLane then
 		for _, minion in pairs(enemyMinions.objects) do
@@ -531,9 +517,6 @@ function MixedClear()
 				if RyzeMenu.clear.clearQ and SkillQ.ready and GetDistanceSqr(minion) <= SkillQ.range*SkillQ.range then
 					CastQ(minion)
 				end
-				--[[if RyzeMenu.clear.clearAA and myHero.canAttack and GetDistanceSqr(minion) <= myHero.range*myHero.range then
-					myHero.Attack(minion)
-				end]]--
 			else
 				if RyzeMenu.clear.clearOrbM then
 					moveToCursor()
@@ -542,6 +525,31 @@ function MixedClear()
 		end
 	end
 	--- Lane Clear ---
+end
+function JungleClear()
+	--- Jungle Clear ---
+	if RyzeMenu.clear.JungleFarm then
+		local JungleMob = GetJungleMob()
+		if ValidTarget(JungleMob) and JungleMob ~= nil then
+			if RyzeMenu.clear.clearOrbJ then
+				OrbWalking(JungleMob)
+			end
+			if RyzeMenu.clear.clearE and SkillE.ready and GetDistanceSqr(JungleMob) <= SkillE.range*SkillE.range then
+				CastE(JungleMob)
+			end
+			if RyzeMenu.clear.clearW and SkillW.ready and GetDistanceSqr(JungleMob) <= SkillW.range*SkillW.range then
+				CastW(JungleMob)
+			end
+			if RyzeMenu.clear.clearQ and SkillQ.ready and GetDistanceSqr(JungleMob) <= SkillQ.range*SkillQ.range then
+				CastQ(JungleMob)
+			end
+		else
+			if RyzeMenu.clear.clearOrbJ then
+				moveToCursor()
+			end
+		end
+	end
+	--- Jungle Clear ---
 end
 -- / Clear Function / --
 
@@ -942,7 +950,7 @@ end
 -- / On Draw Function / --
 
 -- / OrbWalking Functions / --
---- Orbwalking Target ---
+	--- Orbwalking Target ---
 	function OrbWalking(Target)
 		if TimeToAttack() and GetDistanceSqr(Target) <= (myHero.range + GetDistance(myHero.minBBox))*(myHero.range + GetDistance(myHero.minBBox)) then
 			myHero:Attack(Target)
@@ -975,7 +983,9 @@ end
 	--- Move to Mouse ---
 	--- On Process Spell ---
 	function OnProcessSpell(object,spell)
-	if not TManager.onSpell:isReady() and RyzeMenu.misc.uTM then return end
+		if not TManager.onSpell:isReady() and RyzeMenu.misc.uTM then
+			return
+		end
 		if object == myHero then
 			if spell.name:lower():find("attack") then
 				lastAttack = GetTickCount() - GetLatency()*0.5
