@@ -447,12 +447,12 @@ function Farm()
 		--- Minion Damages ---
 		local qMinionDmg = getDmg("Q", minion, myHero)
 		local eMinionDmg = getDmg("E", minion, myHero)
-		local aaMinionDmg = getDmg("AD", minion, myHero)
+		--local aaMinionDmg = getDmg("AD", minion, myHero)
 		--- Minion Damages ---
 		--- Minion Keys ---
 		local qFarmKey = RyzeMenu.farming.qFarm
 		local eFarmKey = RyzeMenu.farming.eFarm
-		local aaFarmKey = RyzeMenu.farming.aaFarm
+		--local aaFarmKey = RyzeMenu.farming.aaFarm
 		--- Minion Keys ---
 		--- Farming Minions ---
 		if ValidTarget(minion) and minion ~= nil then
