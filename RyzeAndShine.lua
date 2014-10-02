@@ -1,4 +1,4 @@
-local version = "1.001"
+local version = "1.000"
 
 --[[
 
@@ -33,7 +33,7 @@ local version = "1.001"
 						Jungle-Clear added as own Submenu, but not working yet, dont know if you realy need it...
 			1.000		Completely Rewrote the Script, cause since Patch 4.11 it was broken
 						First Remake Release
-			1.001		General Bugfixing after first Release of Remake
+						
 ]]--
 
 -- / Hero Name Check / --
@@ -126,6 +126,9 @@ function OnTick()
 	if Target then
 		if RyzeMenu.harass.qharass then 
 			CastQ(Target) 
+		end
+		if RyzeMenu.combo.autoW then 
+			CastW(Target) 
 		end
 		if RyzeMenu.killsteal.Ignite then 
 			AutoIgnite(Target)
@@ -320,9 +323,10 @@ function RyzeMenu()
 			RyzeMenu.harass:permaShow("harassKey")
 		RyzeMenu:addSubMenu("[" .. myHero.charName .. " - Farming Settings]", "farming")
 			RyzeMenu.farming:addParam("farmKey", "Farming ON/Off (Z)", SCRIPT_PARAM_ONKEYTOGGLE, true, 90)
-			RyzeMenu.farming:addParam("qFarm", "Farm with " .. SkillQ.name .. " (Q)", SCRIPT_PARAM_ONOFF, true)
+			RyzeMenu.farming:addParam("qFarm", "Farm with " .. SkillQ.name .. " (Q)", SCRIPT_PARAM_ONOFF, false)
 			RyzeMenu.farming:addParam("wFarm", "Farm with " .. SkillW.name .. " (W)", SCRIPT_PARAM_ONOFF, false)
-			RyzeMenu.farming:addParam("eFarm", "Farm with " .. SkillE.name .. " (E)", SCRIPT_PARAM_ONOFF, true)
+			RyzeMenu.farming:addParam("eFarm", "Farm with " .. SkillE.name .. " (E)", SCRIPT_PARAM_ONOFF, false)
+			RyzeMenu.farming:addParam("aaFarm", "Lasthit by attack (AA)", SCRIPT_PARAM_ONOFF, true)
 			RyzeMenu.farming:permaShow("farmKey")
 		RyzeMenu:addSubMenu("[" .. myHero.charName .. " - Clear Settings]", "clear")
 			RyzeMenu.clear:addParam("clearKey", "Jungle/Lane Clear Key (V)", SCRIPT_PARAM_ONKEYDOWN, false, GetKey('V'))
@@ -411,8 +415,10 @@ function Farm()
 	for _, minion in pairs(enemyMinions.objects) do
 		local qMinionDmg = getDmg("Q", minion, myHero)
 		local eMinionDmg = getDmg("E", minion, myHero)
+		local aaMinionDmg = getDmg("AD", minion, myHero)
 		local qFarmKey = RyzeMenu.farming.qFarm
 		local eFarmKey = RyzeMenu.farming.eFarm
+		local aaFarmKey = RyzeMenu.farming.aaFarm
 		if ValidTarget(minion) and minion ~= nil then
 			if GetDistanceSqr(minion) <= SkillW.range*SkillW.range then
 				if qFarmKey and EFarmKey then
@@ -456,6 +462,15 @@ function Farm()
 				end
 			end
 		end
+		if GetDistanceSqr(minion) <= myHero.range*myHero.range then
+				if aaFarmKey then
+					if myHero.canAttack then
+						if minion.health <= (aaMinionDmg) then
+							myHero:Attack(minion)
+						end
+					end
+				end
+			end
 		break
 	end
 end
@@ -939,7 +954,7 @@ if VIP_USER then
 		local tPos = vPos1 - (vPos1 - vPos2):normalized() * radius
 		local sPos = WorldToScreen(D3DXVECTOR3(tPos.x, tPos.y, tPos.z))
 		if OnScreen({ x = sPos.x, y = sPos.y }, { x = sPos.x, y = sPos.y }) then
-			DrawCircleNextLvl(x, y, z, radius, 1, color, KatarinaMenu.drawing.lfc.CL) 
+			DrawCircleNextLvl(x, y, z, radius, 1, color, RyzeMenu.drawing.lfc.CL) 
 		end
 	end
 end
