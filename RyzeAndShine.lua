@@ -706,7 +706,11 @@ function KillSteal()
 				CastE(enemy)
 			elseif health <= (qDmg + wDmg + eDmg) and SkillQ.ready and SkillW.ready and SkillE.ready and (distance <= SkillE.range*SkillE.range) then
 				CastE(enemy)
+<<<<<<< HEAD
 			elseif RyzeMenu.killsteal.itemsKS then
+=======
+			elseif KatarinaMenu.killsteal.itemsKS then
+>>>>>>> 57d3886b8e50458f0f7014cff2b33a8b0e82cd90
 				if health <= (qDmg + wDmg + eDmg + itemsDmg) and health >= (qDmg + wDmg + eDmg) then
 					if SkillQ.ready and SkillW.ready and SkillE.ready then
 						UseItems(enemy)
@@ -1008,7 +1012,7 @@ end
 -- / isLow Function / --
 function isLow(Name)
 	if Name == 'Zhonya' or Name == 'Wooglets' then
-		if (myHero.health * (1/myHero.maxHealth)) <= (RyzeMenu.misc.ZWHealth * 0.01) then
+		if (myHero.health * (1/myHero.maxHealth)) <= (Ryze.misc.ZWHealth * 0.01) then
 			return true
 		else
 			return false
