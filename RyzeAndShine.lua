@@ -31,9 +31,9 @@ local version = "1.001"
 						Autoupdate still don't work :(
 			0.109 - 	Fixed Orbwalker, Autoattack to enemy Heros and Minions working now
 						Jungle-Clear added as own Submenu, but not working yet, dont know if you realy need it...
-			1.000		Completely Rewrote the Script, cause since Patch 4.11 it was broken
+			1.000 -		Completely Rewrote the Script, cause since Patch 4.11 it was broken
 						First Remake Release
-			1.001 General Bugfixing after first Release of Remake
+			1.001 -	 	General Bugfixing after first Release of Remake
 						
 ]]--
 
